@@ -15,16 +15,8 @@ function knightMoves(start, end) {
   }
 
   // Check for valid coordinates
-  if (
-    !between(start[0], 0, 7) ||
-    !between(start[1], 0, 7) ||
-    !between(end[0], 0, 7) ||
-    !between(end[1], 0, 7)
-  ) {
-    console.log();
+  if (!isValid(start[0], start[1]) || !isValid(end[0], end[1])) {
     console.log('Invalid coordinates provided.');
-    console.log();
-    console.log('------------');
   }
 
   let queue = [];
@@ -37,21 +29,18 @@ function knightMoves(start, end) {
     const visitedCoords = visited.map((vertex) => vertex.coordinates);
     const currentVertex = queue[0];
     newPaths = potentialPaths(currentVertex.coordinates);
-
     for (let i = 0; i < newPaths.length; i++) {
       const coords = newPaths[i];
       if (!isArrayPresent(visitedCoords, coords)) {
         queue.push(new Vertex(coords, [...currentVertex.path, coords]));
       }
     }
-
     visited.push(queue.shift());
   }
 
   // Take path of last visted vertex and add ending coordinates
   let finalPath = visited.at(-1).path;
   finalPath.push(end);
-
   return printMoves(finalPath);
 }
 
@@ -61,13 +50,12 @@ function potentialPaths(vertex) {
   const potentialMoves = [1, 2, -1, -2];
 
   let potentialPaths = [];
-
   potentialMoves.forEach((dx) => {
     potentialMoves.forEach((dy) => {
       if (Math.abs(dx) !== Math.abs(dy)) {
         const newX = x + dx;
         const newY = y + dy;
-        if (between(newX, 0, 7) && between(newY, 0, 7)) {
+        if (isValid(newX, newY)) {
           potentialPaths.push([newX, newY]);
         }
       }
@@ -77,8 +65,8 @@ function potentialPaths(vertex) {
   return potentialPaths;
 }
 
-function between(x, min, max) {
-  return x >= min && x <= max;
+function isValid(x, y) {
+  return x >= 0 && x <= 7 && y >= 0 && y <= 7;
 }
 
 function isArrayPresent(arr, target) {
@@ -86,11 +74,8 @@ function isArrayPresent(arr, target) {
 }
 
 function printMoves(arr) {
-  console.log();
   console.log(`You made it in ${arr.length - 1} moves! Here's your path:`);
   arr.forEach((coordinate) => console.log(coordinate));
-  console.log();
-  console.log('------------');
 }
 
 // Testing
